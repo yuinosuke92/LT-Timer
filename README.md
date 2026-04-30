@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Real-time Synced Timer & Marquee Chat
 
-## Getting Started
+Next.js (App Router) で構築された、リアルタイム同期機能付きのタイマーおよび弾幕メッセージ（マーキー）表示アプリケーションです。
 
-First, run the development server:
+## 概要
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+このプロジェクトは、複数のブラウザ間でタイマーの状態（残り時間、開始、停止、リセット）を同期し、さらにニコニコ動画のような「右から左へ流れるメッセージ」をリアルタイムに共有できるツールです。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+プレゼンテーションのタイムキープ、イベントの進捗管理、または配信時のインタラクティブなツールとしての利用を想定しています。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 主な機能
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **高精度タイマー**:
+  - 指定した秒数からのカウントダウン。
+  - 残り時間に応じたプログレスバーと色の変化（緑 → 黄 → 赤）。
+  - タイムアップ時のアラート音通知。
+- **リアルタイム同期 (WebSocket)**:
+  - `WS_PORT: 4001` を介して、全クライアントのタイマー状態を一致させます。
+  - 誰かがスタート/ストップを押すと、全員の画面に反映されます。
+- **弾幕メッセージ機能**:
+  - 画面下部の入力欄からメッセージを送信。
+  - メッセージは全ユーザーの画面上をランダムな高さで右から左へ流れます。
+  - 自分の投稿（緑色）と他人の投稿（黄色）が視覚的に区別されます。
+- **モダンな UI/UX**:
+  - Tailwind CSS を使用したスタイリッシュなダークテーマ。
+  - ガラスモーフィズム（透過背景）を採用したコントロールパネル。
+  - 操作パネルの表示/非表示を切り替え可能。
 
-## Learn More
+## 技術構成
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend**: Next.js 13+ (App Router), TypeScript
+- **Styling**: Tailwind CSS
+- **Real-time**: WebSocket (ブラウザ標準 API)
+- **Animation**: CSS Keyframes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## セットアップ
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 1. WebSocket サーバーの準備
 
-## Deploy on Vercel
+このフロントエンドが接続するための WebSocket サーバーが必要です。サーバーはデフォルトで `4001` ポートを待ち受け、受信したメッセージを他の全クライアントにブロードキャスト（転送）するように設定してください。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. 環境変数の設定 (任意)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+必要に応じて `.env.local` ファイルを作成し、接続先サーバーを指定できます。
+
+```env
+NEXT_PUBLIC_WS_URL=ws://your-websocket-server:4001
+
+
